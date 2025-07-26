@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --border-color: #dbe1eb
+  --border-color: #dbe1eb;
+  --text-color: #525252;
 }
 
 * {

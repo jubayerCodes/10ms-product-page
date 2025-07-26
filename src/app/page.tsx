@@ -1,13 +1,16 @@
-import Hero from "@/components/Hero/Hero";
+
 import { getProductData } from "@/lib/api";
+import Home from "@/pages/Home/Home";
 import { Metadata } from "next";
 
-type Props = {
-  searchParams: { lang?: string }
-};
+interface PageProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  searchParams: any;
+}
 
-export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const lang = searchParams?.lang || 'en';
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+
+  const { lang = 'en' } = await searchParams
   const { data } = await getProductData(lang);
 
   return {
@@ -17,16 +20,11 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   };
 }
 
-export default async function HomePage({ searchParams }: Props) {
-  const lang = searchParams?.lang || 'en';
-  const { data } = await getProductData(lang);
+export default async function HomePage({ searchParams }: PageProps) {
+
+  const { lang = 'en' } = await searchParams
+
   return (
-    <div>
-      <Hero title={data.title} description={data.description} ratings={82.6} media={data.media} />
-      <main>
-        {/* <Instructors sections={data.sections} /> */}
-        {/* Add other sections: Features, About, Checklist etc */}
-      </main>
-    </div>
+    <Home lang={lang} />
   );
 }

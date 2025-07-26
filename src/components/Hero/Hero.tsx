@@ -1,24 +1,43 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
-import { Medium } from '@/types/types';
-import React, { useEffect, useState } from 'react';
+import { Checklist, CtaText, Medium } from '@/types/types';
+import React, { useState } from 'react';
 
 interface Props {
     title: string,
     description: string,
     ratings: number,
-    media: Medium[]
+    media: Medium[],
+    ctaText: CtaText,
+    checkList: Checklist[]
 }
 
-const Hero = ({ title, description, ratings, media }: Props) => {
+const Hero = ({ title, description, ratings, media, ctaText, checkList }: Props) => {
 
     const [active, setActive] = useState(0)
 
-    const customMedia = media.filter((medium: Medium) => medium.name !== "sqr_img" && medium.name !== "thumbnail")
+    const customMedia = media?.filter((medium: Medium) => medium.name !== "sqr_img" && medium.name !== "thumbnail")
 
-    useEffect(() => {
-        console.log(active);
-    }, [active])
+    const handlePrev = () => {
+        if (active > 0) {
+            setActive((oldActive) => oldActive - 1)
+        }
+
+        if (active === 0) {
+            setActive(customMedia.length - 1)
+        }
+    }
+
+    const handleNext = () => {
+        if (active < (customMedia.length - 1)) {
+            setActive((oldActive) => oldActive + 1)
+        }
+
+
+        if (active === customMedia.length - 1) {
+            setActive(0)
+        }
+    }
 
     return (
         <section style={{
@@ -53,10 +72,10 @@ const Hero = ({ title, description, ratings, media }: Props) => {
                     <div className="md:sticky md:top-[112px] ">
                         <div className=" md:border">
                             <div className="hidden p-1 md:block" id="">
-                                {
-                                    customMedia.map((medium: Medium, idx) => (
-                                        medium.resource_type === 'video' ?
-                                            <div className={`relative overflow-hidden bg-black youtube-video aspect-video ${idx === active ? "block" : "hidden"}`} key={idx}>
+                                <div className={`relative overflow-hidden bg-black youtube-video aspect-video`}>
+                                    {
+                                        customMedia[active]?.resource_type === 'video' ?
+                                            <>
                                                 <div className="relative">
                                                     <span className="absolute left-1/2 top-1/2 z-[2] -translate-x-1/2 -translate-y-1/2 cursor-pointer">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 56 56">
@@ -71,58 +90,56 @@ const Hero = ({ title, description, ratings, media }: Props) => {
                                                     <div className="thumb-wrap">
                                                         <div>
                                                             <div className="active opacity-0 transition-opacity duration-300 ease-in-out" style={{ fontSize: "0px", objectFit: "cover", opacity: "1" }}>
-                                                                <img alt="preview_gallery" data-original-src={medium.thumbnail_url} fetchPriority="high" width="867" height="480" decoding="async" data-nimg="1" className="w-full" src={medium.thumbnail_url} style={{ color: "transparent" }} />
+                                                                <img alt="preview_gallery" data-original-src={customMedia[active]?.thumbnail_url} fetchPriority="high" width="867" height="480" decoding="async" data-nimg="1" className="w-full" src={customMedia[active]?.thumbnail_url} style={{ color: "transparent" }} />
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <div className="absolute left-[10px] top-1/2 -translate-y-1/2 z-[4] h-[25px] w-[25px] cursor-pointer">
+                                                    <div onClick={() => handlePrev()} className="absolute left-[10px] top-1/2 -translate-y-1/2 z-[4] h-[25px] w-[25px] cursor-pointer">
                                                         <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" color="white" style={{ color: "white" }} height="25" width="25" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M512 256A256 256 0 1 0 0 256a256 256 0 1 0 512 0zM271 135c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-87 87 87 87c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0L167 273c-9.4-9.4-9.4-24.6 0-33.9L271 135z">
                                                             </path>
                                                         </svg>
                                                     </div>
-                                                    <div className="absolute right-[10px] top-1/2 z-[4] -translate-y-1/2 h-[25px] w-[25px] cursor-pointer">
+                                                    <div onClick={() => handleNext()} className="absolute right-[10px] top-1/2 z-[4] -translate-y-1/2 h-[25px] w-[25px] cursor-pointer">
                                                         <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" color="white" style={{ color: "white" }} height="25" width="25" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM241 377c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l87-87-87-87c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0L345 239c9.4 9.4 9.4 24.6 0 33.9L241 377z"></path>
                                                         </svg>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </>
                                             :
                                             <>
-                                                <div className={`relative overflow-hidden bg-black youtube-video aspect-video ${idx === active ? "block" : "hidden"}`}>
-                                                    <div className="h-full opacity-0 transition-opacity duration-300 ease-in-out" style={{
-                                                        fontSize: "0px", opacity: "1"
-                                                    }}>
-                                                        <img alt="preview_gallery" data-original-src={medium.resource_value} fetchPriority="high" width="640" height="360" decoding="async" data-nimg="1" src={medium.resource_value} style={{ color: "transparent" }} />
+                                                <div className="h-full opacity-0 transition-opacity duration-300 ease-in-out" style={{
+                                                    fontSize: "0px", opacity: "1"
+                                                }}>
+                                                    <img alt="preview_gallery" data-original-src={customMedia[active]?.resource_value} fetchPriority="high" width="640" height="360" decoding="async" data-nimg="1" src={customMedia[active]?.resource_value} style={{ color: "transparent" }} />
+                                                </div>
+                                                <div>
+                                                    <div onClick={() => handlePrev()} className="absolute left-[10px] top-1/2 -translate-y-1/2 z-[4] h-[25px] w-[25px] cursor-pointer">
+                                                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" color="white" style={{ color: "white" }} height="25" width="25" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M512 256A256 256 0 1 0 0 256a256 256 0 1 0 512 0zM271 135c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-87 87 87 87c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0L167 273c-9.4-9.4-9.4-24.6 0-33.9L271 135z">
+                                                            </path>
+                                                        </svg>
                                                     </div>
-                                                    <div>
-                                                        <div className="absolute  left-[10px] top-1/2 -translate-y-1/2 z-[4] h-[25px] w-[25px] cursor-pointer">
-                                                            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" color="white" style={{ color: "white" }} height="25" width="25" xmlns="http://www.w3.org/2000/svg">
-                                                                <path d="M512 256A256 256 0 1 0 0 256a256 256 0 1 0 512 0zM271 135c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-87 87 87 87c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0L167 273c-9.4-9.4-9.4-24.6 0-33.9L271 135z">
-                                                                </path>
-                                                            </svg>
-                                                        </div>
-                                                        <div className="absolute right-[10px] top-1/2 z-[4] -translate-y-1/2 h-[25px] w-[25px] cursor-pointer">
-                                                            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" color="white" style={{ color: "white" }} height="25" width="25" xmlns="http://www.w3.org/2000/svg">
-                                                                <path d="M0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM241 377c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l87-87-87-87c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0L345 239c9.4 9.4 9.4 24.6 0 33.9L241 377z">
-                                                                </path>
-                                                            </svg>
-                                                        </div>
+                                                    <div onClick={() => handleNext()} className="absolute right-[10px] top-1/2 z-[4] -translate-y-1/2 h-[25px] w-[25px] cursor-pointer">
+                                                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" color="white" style={{ color: "white" }} height="25" width="25" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM241 377c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l87-87-87-87c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0L345 239c9.4 9.4 9.4 24.6 0 33.9L241 377z">
+                                                            </path>
+                                                        </svg>
                                                     </div>
-                                                </div >
+                                                </div>
                                             </>
-                                    ))
-                                }
+                                    }
+                                </div>
                                 <div className="flex gap-4 p-4 overflow-x-auto hideScrollbar">
                                     {
                                         customMedia?.map((medium: Medium, idx) => (
                                             medium.resource_type === "video" ?
                                                 <div key={idx} onClick={() => setActive(idx)}>
                                                     <div>
-                                                        <div className="relative w-[55px] rounded cursor-pointer overflow-hidden outline-[2px] outline-[#1CAB55]">
+                                                        <div className={`relative w-[55px] rounded cursor-pointer overflow-hidden ${idx === active && "outline-[2px] outline-[#1CAB55]"}`}>
                                                             <div className="rounded opacity-0 transition-opacity duration-300 ease-in-out" style={{ fontSize: "0px", opacity: "1" }}>
                                                                 <img alt="preview_gallery" data-original-src={medium.thumbnail_url} loading="lazy" width="86" height="50" decoding="async" data-nimg="1" style={{ color: "transparent" }} src={medium.thumbnail_url} />
                                                             </div>
@@ -138,7 +155,7 @@ const Hero = ({ title, description, ratings, media }: Props) => {
                                                 medium.resource_type === "image" ?
                                                     <div key={idx} onClick={() => setActive(idx)}>
                                                         <div>
-                                                            <div className="relative  w-[55px] rounded cursor-pointer border-0">
+                                                            <div className={`relative  w-[55px] rounded cursor-pointer border-0 ${idx === active && "outline-[2px] outline-[#1CAB55]"}`}>
                                                                 <div className="rounded opacity-0 transition-opacity duration-300 ease-in-out" style={{ fontSize: "0px", opacity: "1" }}>
                                                                     <img alt="preview_gallery" data-original-src={medium.resource_value} loading="lazy" width="86" height="50" decoding="async" data-nimg="1" style={{ color: "transparent" }} src={medium.resource_value} />
                                                                 </div>
@@ -168,11 +185,11 @@ const Hero = ({ title, description, ratings, media }: Props) => {
                                                         <div className="flex items-center justify-between md:flex-col md:items-start">
                                                             <div className="md:mb-3">
                                                                 <div className="inline-block text-2xl font-semibold">
-                                                                    ৳3850
+                                                                    ৳1000
                                                                 </div>
                                                                 <span className="infline-flex">
                                                                     <del className="ml-2 text-base font-normal md:text-xl">
-                                                                        ৳5000
+                                                                        ৳1500
                                                                     </del>
                                                                     <div className="c-Tukmu inline-block">
                                                                         <p className="card-price">
@@ -186,7 +203,7 @@ const Hero = ({ title, description, ratings, media }: Props) => {
                                                         </div>
                                                     </div>
                                                     <button className="bg-green whitespace-nowrap button primary text-center md:w-full centered-buttons">
-                                                        কোর্সটি কিনুন
+                                                        {ctaText.name}
                                                     </button>
                                                 </div>
                                             </div>
@@ -197,20 +214,24 @@ const Hero = ({ title, description, ratings, media }: Props) => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="hidden md:block">
-                                <div className="grid py-2 md:p-4">
-                                    <p className="mb-4 text-lg font-semibold">
-                                        এই কোর্সে যা থাকছে
-                                    </p>
-                                    <div>
-                                        <div className="flex items-center mb-3 leading-5">
-                                            <div className="inline-block h-[20px] w-[20px] opacity-0 transition-opacity duration-300 ease-in-out" style={{ fontSize: "0px", opacity: "1" }}>
-                                                <img alt="icon" data-original-src="https://cdn.10minuteschool.com/images/PDP/course-fact-icons/course_participants.png" loading="lazy" width="20" height="20" decoding="async" data-nimg="1" style={{ color: "transparent" }} src="https://cdn.10minuteschool.com/images/PDP/course-fact-icons/course_participants.png" />
-                                            </div>
-                                            <h4 className="mb-0 inline-block pl-2 tracking-[0.005em] text-[#111827] text-sm">
-                                                কোর্সটি করছেন ৩২৯৯৫ জন
-                                            </h4>
+                                <div className="hidden md:block">
+                                    <div className="grid py-2 md:p-4">
+                                        <p className="mb-4 text-lg font-semibold">
+                                            এই কোর্সে যা থাকছে
+                                        </p>
+                                        <div>
+                                            {
+                                                checkList.map((item: Checklist, idx) => (
+                                                    <div key={idx} className="flex items-center mb-3 leading-5">
+                                                        <div className="inline-block h-[20px] w-[20px] opacity-0 transition-opacity duration-300 ease-in-out" style={{ fontSize: "0px", opacity: "1" }}>
+                                                            <img alt="icon" data-original-src={item?.icon} loading="lazy" width="20" height="20" decoding="async" data-nimg="1" style={{ color: "transparent" }} src={item?.icon} />
+                                                        </div>
+                                                        <h4 className="mb-0 inline-block pl-2 tracking-[0.005em] text-[#111827] text-sm">
+                                                            {item?.text}
+                                                        </h4>
+                                                    </div>
+                                                ))
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -232,8 +253,8 @@ const Hero = ({ title, description, ratings, media }: Props) => {
                         </p>
                     </div>
                 </section>
-            </div >
-        </section >
+            </div>
+        </section>
     );
 };
 

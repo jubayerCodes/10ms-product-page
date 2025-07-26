@@ -42,6 +42,29 @@ export interface OldInfo {
   slug: string
 }
 
+export interface Instructor {
+  description: string,
+  has_instructor_page: boolean,
+  image: string,
+  name: string,
+  short_description: string,
+  slug: string
+}
+
+export interface IFeature {
+  icon: string,
+  id: string,
+  subtitle: string,
+  title: string
+}
+
+export interface Pointer {
+  color: string,
+  icon: string,
+  id: string,
+  text: string
+}
+
 export interface ProductData {
   slug: string;
   id: number;
