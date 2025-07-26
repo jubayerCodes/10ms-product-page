@@ -5,6 +5,7 @@ import Instructors from '../Instructors/Instructors';
 import Features from '../Features/Features';
 import Pointers from '../Pointers/Pointers';
 import FeatureExplanations from '../FeatureExplanations/FeatureExplanations';
+import CourseDetails from '../CourseDetails/CourseDetails';
 
 const Sections = ({ sections }: { sections: Section[] }) => {
 
@@ -23,6 +24,8 @@ const Sections = ({ sections }: { sections: Section[] }) => {
                             return <Pointers pointers={section?.values} section={section} key={section?.order_idx} />;
                         case "feature_explanations":
                             return <FeatureExplanations features={section?.values} section={section} key={section?.order_idx} />;
+                        case "about":
+                            return <CourseDetails details={section?.values} section={section} key={section?.order_idx} />;
                     }
 
                 })
